@@ -43,6 +43,26 @@ namespace TMDbLib.Client
             Initialize(baseUrl, useSsl, apiKey);
         }
 
+        public TMDbClient()
+        {
+            DefaultLanguage = null;
+            DefaultImageLanguage = null;
+            DefaultCountry = null;
+
+            _serializer = JsonSerializer.CreateDefault();
+            _serializer.Converters.Add(new ChangeItemConverter());
+            _serializer.Converters.Add(new AccountStateConverter());
+            _serializer.Converters.Add(new KnownForConverter());
+            _serializer.Converters.Add(new SearchBaseConverter());
+            _serializer.Converters.Add(new TaggedImageConverter());
+            _serializer.Converters.Add(new TolerantEnumConverter());
+
+
+        }
+        public void SetApiKey(string apiKey)
+        {
+            Initialize(ProductionUrl, true, apiKey);
+        }
         /// <summary>
         /// The account details of the user account associated with the current user session
         /// </summary>
