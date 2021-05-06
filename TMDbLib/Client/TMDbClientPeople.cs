@@ -28,7 +28,18 @@ namespace TMDbLib.Client
         public async Task<Person> GetPersonAsync(int personId, PersonMethods extraMethods = PersonMethods.Undefined,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await GetPersonAsync(personId, DefaultLanguage, extraMethods, cancellationToken);
+           
+           var result = await GetPersonAsync(personId, DefaultLanguage, extraMethods, cancellationToken);
+           if (!string.IsNullOrWhiteSpace(result.Biography))
+            {
+                return await GetPersonAsync(personId, DefaultLanguage, extraMethods, cancellationToken);
+            }
+
+            return await GetPersonAsync(personId, "english", extraMethods, cancellationToken);
+
+
+
+            //return await GetPersonAsync(personId, DefaultLanguage, extraMethods, cancellationToken);
         }
 
         public async Task<Person> GetPersonAsync(int personId, string language, PersonMethods extraMethods = PersonMethods.Undefined, CancellationToken cancellationToken = default(CancellationToken))
@@ -55,9 +66,10 @@ namespace TMDbLib.Client
             RestResponse<Person> response = await req.ExecuteGet<Person>(cancellationToken).ConfigureAwait(false);
 
             if (!response.IsValid)
-                return null;
+                return null;           
 
             Person item = await response.GetDataObject().ConfigureAwait(false);
+
 
             // Patch up data, so that the end user won't notice that we share objects between request-types.
             if (item != null)
@@ -70,10 +82,15 @@ namespace TMDbLib.Client
 
                 if (item.MovieCredits != null)
                     item.MovieCredits.Id = item.Id;
+
+                if (string.IsNullOrWhiteSpace(item.Biography))
+                    item.Biography = "N/A";
             }
 
             return item;
         }
+
+
 
         public async Task<List<Change>> GetPersonChangesAsync(int personId, DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default(CancellationToken))
         {

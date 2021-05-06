@@ -114,6 +114,9 @@ namespace TMDbLib.Client
             if (item.Videos != null)
                 item.Videos.Id = item.Id;
 
+            if (string.IsNullOrWhiteSpace(item.Overview))
+                item.Overview = "N/A";
+
             if (item.AlternativeTitles != null)
                 item.AlternativeTitles.Id = item.Id;
 

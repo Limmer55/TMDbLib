@@ -105,6 +105,9 @@ namespace TMDbLib.Client
             if (item.Translations != null)
                 item.Translations.Id = id;
 
+            if (string.IsNullOrWhiteSpace(item.Overview))
+                item.Overview = "N/A";
+
             if (item.AccountStates != null)
                 item.AccountStates.Id = id;
 

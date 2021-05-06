@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using TMDbLib.Objects.Changes;
 using TMDbLib.Objects.General;
@@ -132,5 +133,28 @@ namespace TMDbLib.Objects.Movies
 
         [JsonProperty("vote_count")]
         public int VoteCount { get; set; }
+
+        public List<WatchProviderItem> GetWatchProviderItems(string locale, int providerId)
+        {
+            List<WatchProviderItem> watchProviderItems = new List<WatchProviderItem>();
+            if (this.WatchProviders.Results.ContainsKey(locale))
+            {
+                this.WatchProviders?.Results[locale]?.FlatRate?.Where(p => p.ProviderId == providerId).ToList().ForEach(s => watchProviderItems.Add(s));
+                this.WatchProviders?.Results[locale]?.Buy?.Where(p => p.ProviderId == providerId).ToList().ForEach(s => watchProviderItems.Add(s));
+                this.WatchProviders?.Results[locale]?.Rent?.Where(p => p.ProviderId == providerId).ToList().ForEach(s => watchProviderItems.Add(s));
+            }
+            return watchProviderItems;
+        }
+        public List<WatchProviderItem> GetWatchProviderItems(string locale)
+        {
+            List<WatchProviderItem> watchProviderItems = new List<WatchProviderItem>();
+            if (this.WatchProviders.Results.ContainsKey(locale))
+            {
+                this.WatchProviders?.Results[locale]?.FlatRate?.ToList().ForEach(s => watchProviderItems.Add(s));
+                this.WatchProviders?.Results[locale]?.Buy?.ToList().ForEach(s => watchProviderItems.Add(s));
+                this.WatchProviders?.Results[locale]?.Rent?.ToList().ForEach(s => watchProviderItems.Add(s));
+            }
+            return watchProviderItems;
+        }
     }
 }
